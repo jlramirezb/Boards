@@ -1,0 +1,20 @@
+.jxg-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.board-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+}
+
+.jxgbox {
+    width: 300px;
+    height: 300px;
+}
+
+button {
+    margin: 5px;
+}
