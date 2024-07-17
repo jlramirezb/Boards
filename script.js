@@ -64,6 +64,7 @@ function loadElements(boardKey) {
                 line.point2.moveTo([newX, 10]);
                 updateElement(boardKey, {type: 'line', coords: [[newX, -10], [newX, 10]]});
             });
+            el.object = line;
         } else if (el.type === 'point') {
             const point = Boards[boardKey].instance.create('point', el.coords, {
                 size: 4,
@@ -76,6 +77,7 @@ function loadElements(boardKey) {
                 point.moveTo([point.X(), newY]);
                 updateElement(boardKey, {type: 'point', coords: [point.X(), newY]});
             });
+            el.object = point;
         }
         Boards[boardKey].elements.push(el);
     });
@@ -95,6 +97,16 @@ function updateElement(boardKey, updatedElement) {
         elements[index] = updatedElement;
         localStorage.setItem(boardKey + '_elements', JSON.stringify(elements));
     }
+}
+
+// Función para limpiar el tablero
+function clearBoard(boardKey) {
+    const boardConfig = Boards[boardKey];
+    boardConfig.elements.forEach(el => {
+        boardConfig.instance.removeObject(el.object);
+    });
+    boardConfig.elements = [];
+    localStorage.removeItem(boardKey + '_elements');
 }
 
 // Inicializar los tableros JSXGraph
@@ -129,7 +141,7 @@ Object.keys(Boards).forEach(key => {
                 line.point2.moveTo([newX, 10]);
                 updateElement(key, {type: 'line', coords: [[newX, -10], [newX, 10]]});
             });
-            saveElements(key, {type: 'line', coords: [[coords[0], -10], [coords[0], 10]]});
+            saveElements(key, {type: 'line', coords: [[coords[0], -10], [coords[0], 10]], object: line});
             boardConfig.mode = 'none';
         } else if (boardConfig.mode === 'point') {
             const point = boardConfig.instance.create('point', coords, {
@@ -140,16 +152,16 @@ Object.keys(Boards).forEach(key => {
             });
             point.on('drag', () => {
                 const newY = point.Y();
-                point.moveTo([point.X(), newY]);
-                updateElement(key, {type: 'point', coords: [point.X(), newY]});
+                point.moveTo([coords[0], newY]);  // Solo permitir movimiento vertical
+                updateElement(key, {type: 'point', coords: [coords[0], newY]});
             });
-            saveElements(key, {type: 'point', coords});
+            saveElements(key, {type: 'point', coords, object: point});
             boardConfig.mode = 'none';
         }
     });
 });
 
-// Manejar eventos de botones
+// Manejar eventos de botones para dibujar líneas
 document.querySelectorAll('.draw-line').forEach(button => {
     button.addEventListener('click', () => {
         const boardKey = 'board' + button.getAttribute('data-board');
@@ -157,9 +169,18 @@ document.querySelectorAll('.draw-line').forEach(button => {
     });
 });
 
+// Manejar eventos de botones para dibujar puntos
 document.querySelectorAll('.draw-point').forEach(button => {
     button.addEventListener('click', () => {
         const boardKey = 'board' + button.getAttribute('data-board');
         Boards[boardKey].mode = 'point';
+    });
+});
+
+// Manejar eventos de botones para limpiar tableros
+document.querySelectorAll('.clear-board').forEach(button => {
+    button.addEventListener('click', () => {
+        const boardKey = 'board' + button.getAttribute('data-board');
+        clearBoard(boardKey);
     });
 });
