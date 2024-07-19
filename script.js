@@ -184,3 +184,38 @@ document.querySelectorAll('.clear-board').forEach(button => {
         clearBoard(boardKey);
     });
 });
+
+const boardsContainer = document.getElementById('boards-container');
+
+// Iterar sobre los tableros y crear el HTML dinámicamente
+for (const boardKey in Boards) {
+    console.log(boardKey);
+    const boardContainer = document.createElement('div');
+    boardContainer.classList.add('board-container');
+
+    const jxgbox = document.createElement('div');
+    jxgbox.id = 'jxgbox' + boardKey.replace('board', '');
+    jxgbox.classList.add('jxgbox');
+    boardContainer.appendChild(jxgbox);
+
+    const drawLineButton = document.createElement('button');
+    drawLineButton.classList.add('draw-line');
+    drawLineButton.setAttribute('data-board', boardKey.replace('board', ''));
+    drawLineButton.textContent = 'Dibujar Recta';
+    boardContainer.appendChild(drawLineButton);
+
+    const drawPointButton = document.createElement('button');
+    drawPointButton.classList.add('draw-point');
+    drawPointButton.setAttribute('data-board', boardKey.replace('board', ''));
+    drawPointButton.textContent = 'Dibujar Punto';
+    boardContainer.appendChild(drawPointButton);
+
+    const clearBoardButton = document.createElement('button');
+    clearBoardButton.classList.add('clear-board');
+    clearBoardButton.setAttribute('data-board', boardKey.replace('board', ''));
+    clearBoardButton.textContent = 'Limpiar Tablero';
+    boardContainer.appendChild(clearBoardButton);
+
+    boardsContainer.appendChild(boardContainer );
+}
+
